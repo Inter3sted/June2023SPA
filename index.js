@@ -1,7 +1,8 @@
-import { Header, Nav, Main, Footer } from "./components";
-import * as store from "./store";
+/* eslint-disable no-prototype-builtins */
 import Navigo from "navigo";
 import { capitalize } from "lodash";
+import { Header, Nav, Main, Footer } from "./components";
+import * as store from "./store";
 import axios from "axios";
 
 const router = new Navigo("/");
@@ -13,6 +14,7 @@ function render(state = store.Home) {
       ${Main(state)}
       ${Footer()}
     `;
+
   afterRender(state);
   router.updatePageLinks();
 }
@@ -31,14 +33,12 @@ router.hooks({
         ? capitalize(params.data.view)
         : "Home";
     // Add a switch case statement to handle multiple routes
-
     switch (view) {
-      // New Case for the Home View
       case "Home":
         axios
           // Get request to retrieve the current weather data using the API key and providing a city name
           .get(
-            `https://api.openweathermap.org/data/2.5/weather?appid=${process.env.OPEN_WEATHER_MAP_API_KEY}&q=st%20louis`
+            `https://api.openweathermap.org/data/2.5/weather?appid=${process.env.OPEN_WEATHER_MAP_API_KEY}&q=st&20louis`
           )
           .then((response) => {
             // Convert Kelvin to Fahrenheit since OpenWeatherMap does provide otherwise
@@ -52,14 +52,13 @@ router.hooks({
               feelsLike: kelvinToFahrenheit(response.data.main.feels_like),
               description: response.data.weather[0].main,
             };
-
             // An alternate method would be to store the values independently
             /*
-      store.Home.weather.city = response.data.name;
-      store.Home.weather.temp = kelvinToFahrenheit(response.data.main.temp);
-      store.Home.weather.feelsLike = kelvinToFahrenheit(response.data.main.feels_like);
-      store.Home.weather.description = response.data.weather[0].main;
-      */
+            store.Home.weather.city = response.data.name;
+            store.Home.weather.temp = kelvinToFahrenheit(response.data.main.temp);
+            store.Home.weather.feelsLike = kelvinToFahrenheit(response.data.main.feels_like);
+            store.Home.weather.description = response.data.weather[0].main;
+            */
             done();
           })
           .catch((err) => {
@@ -74,6 +73,7 @@ router.hooks({
           .then((response) => {
             // We need to store the response to the state, in the next step but in the meantime let's see what it looks like so that we know what to store from the response.
             console.log("response", response);
+            // Storing retrieved data in state
             store.Pizza.pizzas = response.data;
             done();
           })
@@ -98,7 +98,7 @@ router.hooks({
 
 router
   .on({
-    "/": () => render(),
+    "/": () => render(store.Home),
     ":view": (params) => {
       let view = capitalize(params.data.view);
       if (store.hasOwnProperty(view)) {
