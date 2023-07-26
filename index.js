@@ -66,25 +66,7 @@ router.hooks({
             done();
           });
         break;
-      case "Pizza":
-        // New Axios get request utilizing already made environment variable
-        axios
-          .get(
-            `https://sc-pizza-api.onrender.com
-          /pizzas`
-          )
-          .then((response) => {
-            // We need to store the response to the state, in the next step but in the meantime let's see what it looks like so that we know what to store from the response.
-            console.log("response", response);
-            // Storing retrieved data in state
-            store.Pizza.pizzas = response.data;
-            done();
-          })
-          .catch((error) => {
-            console.log("It puked", error);
-            done();
-          });
-        break;
+
       default:
         done();
     }
